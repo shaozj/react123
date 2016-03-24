@@ -5,6 +5,29 @@ class TvScrollbar extends React.Component {
     super(props);
   }
 
+  bind () {
+    let self = this;
+    document.body.addEventListener('keydown', function (e) {
+      if(!self.activited) return;
+      let key = e.keyCode;
+      if(key == 38){  // up
+        self.moveUp();
+      }else if(key == 40){  // down
+        self.moveDown();
+      }else{
+        return;
+      }  
+    }, false);
+  }
+
+  activate() {
+    this.activited = true;
+  }
+
+  deactivate() {
+    this.activited = false;
+  }
+
   render() {
     return (
       <div class="J-TVScroll">
