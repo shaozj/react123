@@ -62,7 +62,7 @@ class TvScrollbar extends React.Component {
     this.contentStride = (contentHeight - showHeight) / this.totalSteps;
 
     // 自适应设置thumbHeight 大小，可选项
-    if(adaptiveThumbHeight)
+    if(this.props.adaptiveThumbHeight)
       thumbHeight = setThumbHeight($thumb, scrollbarHeight, this.totalSteps);
 
     this.scrollbarStride = (scrollbarHeight - thumbHeight) / this.totalSteps;
