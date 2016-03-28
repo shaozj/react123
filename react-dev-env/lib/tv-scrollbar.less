@@ -1,0 +1,288 @@
+/** 清除内外边距 **/
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+p,
+blockquote,
+dl,
+dt,
+dd,
+ul,
+li,
+pre,
+form,
+fieldset,
+legend,
+button,
+input,
+textarea,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+/** 设置默认字体 **/
+body,
+button,
+input,
+select,
+textarea {
+  font: 12px/1.5 tahoma, arial, 'Heiti SC', '微软雅黑', sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+}
+address,
+cite,
+dfn,
+em,
+var {
+  font-style: normal;
+}
+/* 将斜体扶正 */
+code,
+kbd,
+pre,
+samp {
+  font-family: courier new, courier, monospace;
+}
+/* 统一等宽字体 */
+small {
+  font-size: 12px;
+}
+/* 小于 12px 的中文很难阅读，让 small 正常化 */
+/** 重置列表元素 **/
+ul,
+ol {
+  list-style: none;
+}
+/** 重置文本格式元素 **/
+a {
+  text-decoration: none;
+  color: #000;
+}
+a:hover {
+  text-decoration: underline;
+}
+sup {
+  vertical-align: text-top;
+}
+/* 重置，减少对行高的影响 */
+sub {
+  vertical-align: text-bottom;
+}
+/** 重置表单元素 **/
+legend {
+  color: #000;
+}
+/* for ie6 */
+fieldset,
+img {
+  border: 0;
+}
+/* img 搭车：让链接里的 img 无边框 */
+img {
+  vertical-align: bottom;
+}
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+}
+/* 使得表单元素在 ie 下能继承字体大小 */
+/* 注：optgroup 无法扶正 */
+/** 重置表格元素 **/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/* 重置 HTML5 元素 */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+mark {
+  background: #ff0;
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.clearfix {
+  display: inline-block;
+}
+/* Hides from IE-mac */
+* html .clearfix {
+  height: 1%;
+}
+.clearfix {
+  display: block;
+}
+/* End hide from IE-mac */
+html,
+body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+}
+body {
+  position: relative;
+  background-repeat: no-repeat;
+  font: 12px/1.5 tahoma, arial, 'Microsoft Yahei', sans-serif;
+  background-color: #FFF;
+}
+body a:hover {
+  text-decoration: none;
+}
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+/*for debug*/
+.__console {
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  width: 1000px;
+  height: 1080px;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 24px;
+  z-index: 999999;
+  color: white;
+}
+.alitvcpnt-time {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  height: 30px;
+  color: #fff;
+  font-size: 30px;
+  opacity: 1;
+}
+.page-wrapper {
+  background: url(//img.alicdn.com/tps/TB1iPPkJFXXXXa7XFXXXXXXXXXX-1920-1080.png);
+  background-size: 1920px 1080px;
+  height: 1080px;
+  padding: 90px 145px;
+}
+.page-wrapper .mod {
+  position: relative;
+  background: #fff;
+  height: 900px;
+  overflow: hidden;
+}
+.page-wrapper .arrow {
+  position: absolute;
+  top: 0px;
+  right: -1px;
+}
+.page-wrapper .h2 {
+  height: 110px;
+  line-height: 110px;
+  color: #000;
+  text-align: center;
+  font-size: 42px;
+  margin: 0 50px;
+}
+.page-wrapper .line {
+  height: 5px;
+  border: 1.5px solid #000;
+  margin: 0 50px;
+  border-right: none;
+  border-left: none;
+}
+.page-wrapper .J-TVScroll {
+  position: relative;
+  height: 783px;
+  overflow: hidden;
+}
+.page-wrapper .J-TVScroll > .tv-scrollbar {
+  position: absolute;
+  top: 0;
+  right: 0px;
+  width: 6px;
+  height: 783px;
+  z-index: 99;
+}
+.page-wrapper .J-TVScroll > .tv-scrollbar > .tv-scrollThumb {
+  position: absolute;
+  left: 0px;
+  width: 6px;
+  height: 162px;
+  background-color: #a0a09f;
+}
+.page-wrapper .tv-scrollContent {
+  margin: 0 50px;
+  color: #737373;
+  font-size: 28px;
+  line-height: 30px;
+  position: relative;
+  z-index: 88;
+  overflow: hidden;
+}
+.page-wrapper .tv-scrollContent h4 {
+  font-size: 36px;
+  color: #000;
+  margin-top: 30px;
+  margin-bottom: 35px;
+}
+.page-wrapper .tv-scrollContent .dcr {
+  margin-bottom: 35px;
+}
+.page-wrapper .tv-scrollContent .imgs {
+  height: 415px;
+}
+.page-wrapper .tv-scrollContent .imgs img {
+  text-align: center;
+  max-height: 100%;
+  margin-right: 25px;
+}
+/*for debug*/
+.__console {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 1000px;
+  height: 1080px;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 24px;
+  z-index: 999999;
+  color: white;
+}
+
+/*# sourceMappingURL=index.css.map */

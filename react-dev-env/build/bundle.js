@@ -34,7 +34,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/Users/shaozj/Documents/study/gitHub/react123/react-dev-env/build";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -60,7 +60,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_reactDom2.default.render(_react2.default.createElement(_tvScrollbar2.default, { phrase: 'ES7' }), document.getElementById('content'));
+	_reactDom2.default.render(_react2.default.createElement(_tvScrollbar2.default, { items: '<div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div><div>hello world!</div>' }), document.getElementById('content'));
 
 /***/ },
 /* 1 */
@@ -19740,24 +19740,177 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var indexless = __webpack_require__(160);
+	
 	var TvScrollbar = function (_React$Component) {
 	  _inherits(TvScrollbar, _React$Component);
 	
-	  function TvScrollbar() {
+	  function TvScrollbar(props, context) {
 	    _classCallCheck(this, TvScrollbar);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TvScrollbar).apply(this, arguments));
+	    // getInitialState
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TvScrollbar).call(this, props, context));
+	
+	    var thumbCssObj = {
+	      transition: 'transform 0.2s ease',
+	      transform: 'translate3d(0, 0, 0)'
+	    };
+	
+	    var contentCssObj = {
+	      transition: 'transform 0.2s ease',
+	      transform: 'translate3d(0, 0, 0)'
+	    };
+	
+	    _this.state = {
+	      thumbCss: thumbCssObj,
+	      contentCss: contentCssObj
+	    };
+	    return _this;
 	  }
 	
 	  _createClass(TvScrollbar, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      /*
+	      * @param $container 需要添加滚动条的窗口
+	      * @param $content 需要滚动显示的内容
+	      * @param $scrollbar 整条滚动条
+	      * @param $thumb 滚动条中的按钮
+	      */
+	      var $container = this.refs.tvScroll;
+	      var $content = this.refs.tvScrollContent;
+	      var $scrollbar = this.refs.tvScrollbar;
+	      var $thumb = this.refs.tvScrollThumb;
+	
+	      this.iNow = 0;
+	      this.totalSteps = 0;
+	      this.contentStride = this.props.contentStride;
+	      this.scrollbarStride = 0;
+	      this.$container = $container;
+	      this.$content = $content;
+	      this.$thumb = $thumb;
+	      this.activited = true;
+	
+	      var contentHeight = $content.scrollHeight;
+	      var showHeight = $container.clientHeight;
+	      var scrollbarHeight = $scrollbar.scrollHeight;
+	      var thumbHeight = $thumb.scrollHeight;
+	
+	      var contentStride = this.props.contentStride || showHeight / 10;
+	      this.contentStride = contentStride;
+	
+	      // 处理内容高度小于窗口高度的情况，此时不显示滚动条
+	      if (contentHeight <= showHeight) {
+	        $scrollbar.style.display = 'none';
+	        $thumb.style.display = 'none';
+	        return;
+	      }
+	
+	      this.totalSteps = parseInt((contentHeight - showHeight) / contentStride);
+	      // 调整contentStride的大小
+	      this.contentStride = (contentHeight - showHeight) / this.totalSteps;
+	
+	      // 自适应设置thumbHeight 大小，可选项
+	      if (this.props.adaptiveThumbHeight) thumbHeight = this._setThumbHeight($thumb, scrollbarHeight, this.totalSteps);
+	
+	      this.scrollbarStride = (scrollbarHeight - thumbHeight) / this.totalSteps;
+	
+	      // console.log("content height: " + contentHeight);
+	      // console.log("show height: " + showHeight);
+	      // console.log("scrollbar height: " + scrollbarHeight);
+	      // console.log("thumb height: " + thumbHeight);
+	      // console.log("totalSteps: " + this.totalSteps);
+	      // console.log("scrollbarStride: " + this.scrollbarStride);
+	      // console.log("content stride: " + this.contentStride);
+	
+	      this.bind();
+	    }
+	  }, {
+	    key: 'bind',
+	    value: function bind() {
+	      var self = this;
+	      document.body.addEventListener('keydown', function (e) {
+	        if (!self.activited) return;
+	        var key = e.keyCode;
+	        if (key == 38) {
+	          // up
+	          self.moveUp();
+	        } else if (key == 40) {
+	          // down
+	          self.moveDown();
+	        } else {
+	          return;
+	        }
+	      }, false);
+	    }
+	  }, {
+	    key: 'moveUp',
+	    value: function moveUp() {
+	      this.iNow--;
+	      if (this.iNow < 0) {
+	        this.iNow = 0;
+	      }
+	      var dist1 = -this.iNow * this.contentStride;
+	      var dist2 = this.iNow * this.scrollbarStride;
+	      this.setState({
+	        thumbCss: this._getAnimStyle(dist2),
+	        contentCss: this._getAnimStyle(dist1)
+	      });
+	    }
+	  }, {
+	    key: 'moveDown',
+	    value: function moveDown() {
+	      this.iNow++;
+	      if (this.iNow > this.totalSteps) {
+	        this.iNow = this.totalSteps;
+	      }
+	      var dist1 = -this.iNow * this.contentStride;
+	      var dist2 = this.iNow * this.scrollbarStride;
+	      this.setState({
+	        thumbCss: this._getAnimStyle(dist2),
+	        contentCss: this._getAnimStyle(dist1)
+	      });
+	    }
+	  }, {
+	    key: 'activate',
+	    value: function activate() {
+	      this.activited = true;
+	    }
+	  }, {
+	    key: 'deactivate',
+	    value: function deactivate() {
+	      this.activited = false;
+	    }
+	  }, {
+	    key: '_setThumbHeight',
+	    value: function _setThumbHeight($thumb, scrollbarHeight, totalSteps) {
+	      var thumbHeight = scrollbarHeight / totalSteps * 4;
+	      // 设置一个最小高度
+	      if (thumbHeight < 30) thumbHeight = 30;
+	      $thumb.style.height = thumbHeight + 'px';
+	      return thumbHeight;
+	    }
+	  }, {
+	    key: '_getAnimStyle',
+	    value: function _getAnimStyle(dist) {
+	      return {
+	        transition: 'transform 0.2s ease',
+	        transform: 'translate3d(0, ' + dist + 'px, 0)'
+	      };
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        'h1',
-	        null,
-	        'Hello from ',
-	        this.props.phrase,
-	        '!'
+	        'div',
+	        { className: 'J-TVScroll', ref: 'tvScroll' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'tv-scrollbar', ref: 'tvScrollbar' },
+	          _react2.default.createElement('div', { style: this.state.thumbCss, className: 'tv-scrollThumb', ref: 'tvScrollThumb' })
+	        ),
+	        _react2.default.createElement('div', { style: this.state.contentCss, className: 'tv-scrollContent', ref: 'tvScrollContent', dangerouslySetInnerHTML: { __html: this.props.items } })
 	      );
 	    }
 	  }]);
@@ -19766,6 +19919,326 @@
 	}(_react2.default.Component);
 	
 	exports.default = TvScrollbar;
+
+/***/ },
+/* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(161);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(163)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/less-loader/index.js!./tv-scrollbar.less", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/less-loader/index.js!./tv-scrollbar.less");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(162)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "/** 清除内外边距 **/\nbody,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\nhr,\np,\nblockquote,\ndl,\ndt,\ndd,\nul,\nli,\npre,\nform,\nfieldset,\nlegend,\nbutton,\ninput,\ntextarea,\nth,\ntd {\n  margin: 0;\n  padding: 0;\n}\n/** 设置默认字体 **/\nbody,\nbutton,\ninput,\nselect,\ntextarea {\n  font: 12px/1.5 tahoma, arial, 'Heiti SC', '\\5FAE\\8F6F\\96C5\\9ED1', sans-serif;\n}\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-size: 100%;\n}\naddress,\ncite,\ndfn,\nem,\nvar {\n  font-style: normal;\n}\n/* 将斜体扶正 */\ncode,\nkbd,\npre,\nsamp {\n  font-family: courier new, courier, monospace;\n}\n/* 统一等宽字体 */\nsmall {\n  font-size: 12px;\n}\n/* 小于 12px 的中文很难阅读，让 small 正常化 */\n/** 重置列表元素 **/\nul,\nol {\n  list-style: none;\n}\n/** 重置文本格式元素 **/\na {\n  text-decoration: none;\n  color: #000;\n}\na:hover {\n  text-decoration: underline;\n}\nsup {\n  vertical-align: text-top;\n}\n/* 重置，减少对行高的影响 */\nsub {\n  vertical-align: text-bottom;\n}\n/** 重置表单元素 **/\nlegend {\n  color: #000;\n}\n/* for ie6 */\nfieldset,\nimg {\n  border: 0;\n}\n/* img 搭车：让链接里的 img 无边框 */\nimg {\n  vertical-align: bottom;\n}\nbutton,\ninput,\nselect,\ntextarea {\n  font-size: 100%;\n}\n/* 使得表单元素在 ie 下能继承字体大小 */\n/* 注：optgroup 无法扶正 */\n/** 重置表格元素 **/\ntable {\n  border-collapse: collapse;\n  border-spacing: 0;\n}\n/* 重置 HTML5 元素 */\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmenu,\nnav,\nsection,\nsummary,\ntime,\nmark,\naudio,\nvideo {\n  display: block;\n  margin: 0;\n  padding: 0;\n}\nmark {\n  background: #ff0;\n}\n.clearfix:after {\n  content: \".\";\n  display: block;\n  height: 0;\n  clear: both;\n  visibility: hidden;\n}\n.clearfix {\n  display: inline-block;\n}\n/* Hides from IE-mac */\n* html .clearfix {\n  height: 1%;\n}\n.clearfix {\n  display: block;\n}\n/* End hide from IE-mac */\nhtml,\nbody {\n  width: 1920px;\n  height: 1080px;\n  overflow: hidden;\n}\nbody {\n  position: relative;\n  background-repeat: no-repeat;\n  font: 12px/1.5 tahoma, arial, 'Microsoft Yahei', sans-serif;\n  background-color: #FFF;\n}\nbody a:hover {\n  text-decoration: none;\n}\n.mask {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background: rgba(0, 0, 0, 0.5);\n  z-index: 10;\n}\n/*for debug*/\n.__console {\n  position: fixed;\n  right: 0px;\n  top: 0px;\n  width: 1000px;\n  height: 1080px;\n  background: rgba(0, 0, 0, 0.5);\n  font-size: 24px;\n  z-index: 999999;\n  color: white;\n}\n.alitvcpnt-time {\n  position: absolute;\n  top: 30px;\n  right: 30px;\n  height: 30px;\n  color: #fff;\n  font-size: 30px;\n  opacity: 1;\n}\n.page-wrapper {\n  background: url(//img.alicdn.com/tps/TB1iPPkJFXXXXa7XFXXXXXXXXXX-1920-1080.png);\n  background-size: 1920px 1080px;\n  height: 1080px;\n  padding: 90px 145px;\n}\n.page-wrapper .mod {\n  position: relative;\n  background: #fff;\n  height: 900px;\n  overflow: hidden;\n}\n.page-wrapper .arrow {\n  position: absolute;\n  top: 0px;\n  right: -1px;\n}\n.page-wrapper .h2 {\n  height: 110px;\n  line-height: 110px;\n  color: #000;\n  text-align: center;\n  font-size: 42px;\n  margin: 0 50px;\n}\n.page-wrapper .line {\n  height: 5px;\n  border: 1.5px solid #000;\n  margin: 0 50px;\n  border-right: none;\n  border-left: none;\n}\n.page-wrapper .J-TVScroll {\n  position: relative;\n  height: 783px;\n  overflow: hidden;\n}\n.page-wrapper .J-TVScroll > .tv-scrollbar {\n  position: absolute;\n  top: 0;\n  right: 0px;\n  width: 6px;\n  height: 783px;\n  z-index: 99;\n}\n.page-wrapper .J-TVScroll > .tv-scrollbar > .tv-scrollThumb {\n  position: absolute;\n  left: 0px;\n  width: 6px;\n  height: 162px;\n  background-color: #a0a09f;\n}\n.page-wrapper .tv-scrollContent {\n  margin: 0 50px;\n  color: #737373;\n  font-size: 28px;\n  line-height: 30px;\n  position: relative;\n  z-index: 88;\n  overflow: hidden;\n}\n.page-wrapper .tv-scrollContent h4 {\n  font-size: 36px;\n  color: #000;\n  margin-top: 30px;\n  margin-bottom: 35px;\n}\n.page-wrapper .tv-scrollContent .dcr {\n  margin-bottom: 35px;\n}\n.page-wrapper .tv-scrollContent .imgs {\n  height: 415px;\n}\n.page-wrapper .tv-scrollContent .imgs img {\n  text-align: center;\n  max-height: 100%;\n  margin-right: 25px;\n}\n/*for debug*/\n.__console {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 1000px;\n  height: 1080px;\n  background: rgba(0, 0, 0, 0.5);\n  font-size: 24px;\n  z-index: 999999;\n  color: white;\n}\n/*# sourceMappingURL=index.css.map */\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 162 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function () {
+		var list = [];
+	
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for (var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if (item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+	
+		// import a list of modules into the list
+		list.i = function (modules, mediaQuery) {
+			if (typeof modules === "string") modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for (var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if (typeof id === "number") alreadyImportedModules[id] = true;
+			}
+			for (i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if (typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if (mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if (mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0;
+	
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+	
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+	
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+	
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+	
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+	
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+	
+	function createStyleElement() {
+		var styleElement = document.createElement("style");
+		var head = getHeadElement();
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		return styleElement;
+	}
+	
+	function createLinkElement() {
+		var linkElement = document.createElement("link");
+		var head = getHeadElement();
+		linkElement.rel = "stylesheet";
+		head.appendChild(linkElement);
+		return linkElement;
+	}
+	
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+	
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement());
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement();
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement();
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+			};
+		}
+	
+		update(obj);
+	
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+	
+	var replaceText = (function () {
+		var textStore = [];
+	
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+	
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+	
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+	
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+	
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+	
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+	
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+	
+		var blob = new Blob([css], { type: "text/css" });
+	
+		var oldSrc = linkElement.href;
+	
+		linkElement.href = URL.createObjectURL(blob);
+	
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
 
 /***/ }
 /******/ ]);

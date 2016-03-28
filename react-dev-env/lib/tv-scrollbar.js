@@ -1,4 +1,5 @@
 import React from 'react';
+const indexless = require('./tv-scrollbar.less'); 
 
 class TvScrollbar extends React.Component {
   constructor(props, context) {
@@ -17,7 +18,7 @@ class TvScrollbar extends React.Component {
 
     this.state = {
       thumbCss: thumbCssObj,
-      contentCssObj: contentCss
+      contentCss: contentCssObj
     }
   }
 
@@ -28,10 +29,10 @@ class TvScrollbar extends React.Component {
     * @param $scrollbar 整条滚动条
     * @param $thumb 滚动条中的按钮
     */
-    let $container = this.refs.tvScroll.getDOMNode();
-    let $content = this.refs.tvScrollContent.getDOMNode();
-    let $scrollbar = this.refs.tvScrollbar.getDOMNode();
-    let $thumb = this.refs.tvScrollThumb.getDOMNode();
+    let $container = this.refs.tvScroll;
+    let $content = this.refs.tvScrollContent
+    let $scrollbar = this.refs.tvScrollbar;
+    let $thumb = this.refs.tvScrollThumb;
 
     this.iNow = 0;
     this.totalSteps = 0;
@@ -42,18 +43,18 @@ class TvScrollbar extends React.Component {
     this.$thumb = $thumb;
     this.activited = true;
 
-    let contentHeight = getElementHeight($content);
+    let contentHeight = $content.scrollHeight;
     let showHeight = $container.clientHeight;
-    let scrollbarHeight = getElementHeight($scrollbar);
-    let thumbHeight = getElementHeight($thumb);
+    let scrollbarHeight = $scrollbar.scrollHeight;
+    let thumbHeight = $thumb.scrollHeight;
 
-    contentStride = contentStride || showHeight / 10;
+    let contentStride = this.props.contentStride || showHeight / 10;
     this.contentStride = contentStride;
 
     // 处理内容高度小于窗口高度的情况，此时不显示滚动条
     if(contentHeight <= showHeight) {
-      $('.tv-scrollbar').style.display = 'none';
-      $('.tv-scrollThumb').style.display = 'none';
+      $scrollbar.style.display = 'none';
+      $thumb.style.display = 'none';
       return;
     }
 
@@ -63,7 +64,7 @@ class TvScrollbar extends React.Component {
 
     // 自适应设置thumbHeight 大小，可选项
     if(this.props.adaptiveThumbHeight)
-      thumbHeight = setThumbHeight($thumb, scrollbarHeight, this.totalSteps);
+      thumbHeight = this._setThumbHeight($thumb, scrollbarHeight, this.totalSteps);
 
     this.scrollbarStride = (scrollbarHeight - thumbHeight) / this.totalSteps;
 
@@ -93,6 +94,32 @@ class TvScrollbar extends React.Component {
     }, false);
   }
 
+  moveUp() {
+    this.iNow --;
+    if(this.iNow < 0){
+      this.iNow = 0;
+    }
+    let dist1 = -this.iNow * this.contentStride;
+    let dist2 = this.iNow * this.scrollbarStride;
+    this.setState({
+      thumbCss: this._getAnimStyle(dist2),
+      contentCss: this._getAnimStyle(dist1)
+    })
+  }
+
+  moveDown() {
+    this.iNow ++;
+    if(this.iNow > this.totalSteps){
+      this.iNow = this.totalSteps;
+    }
+    let dist1 = -this.iNow * this.contentStride;
+    let dist2 = this.iNow * this.scrollbarStride;
+    this.setState({
+      thumbCss: this._getAnimStyle(dist2),
+      contentCss: this._getAnimStyle(dist1)
+    })
+  }
+
   activate() {
     this.activited = true;
   }
@@ -101,13 +128,28 @@ class TvScrollbar extends React.Component {
     this.activited = false;
   }
 
+  _setThumbHeight($thumb, scrollbarHeight, totalSteps) {
+    let thumbHeight = scrollbarHeight / totalSteps * 4;
+    // 设置一个最小高度
+    if(thumbHeight < 30) thumbHeight = 30;
+    $thumb.style.height = thumbHeight + 'px';
+    return thumbHeight;
+  }
+
+  _getAnimStyle(dist) {
+    return {
+      transition: 'transform 0.2s ease',
+      transform: 'translate3d(0, ' + dist + 'px, 0)'
+    }
+  }
+
   render() {
     return (
-      <div class="J-TVScroll" ref="tvScroll" >
-        <div class="tv-scrollbar" ref="tvScrollbar">
-          <div style={this.state.thumbCss} class="tv-scrollThumb" ref="tvScrollThumb"></div>
+      <div className="J-TVScroll" ref="tvScroll" >
+        <div className="tv-scrollbar" ref="tvScrollbar">
+          <div style={this.state.thumbCss} className="tv-scrollThumb" ref="tvScrollThumb"></div>
         </div>
-        <div style={this.state.contentCss} class="tv-scrollContent" ref="tvScrollContent">
+        <div style={this.state.contentCss} className="tv-scrollContent" ref="tvScrollContent" dangerouslySetInnerHTML={{__html: this.props.items}}>
 
         </div>
       </div>
