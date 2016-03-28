@@ -6,19 +6,14 @@ class TvScrollbar extends React.Component {
     super(props, context);
 
     // getInitialState
-    let thumbCssObj = {
-      transition: 'transform 0.2s ease',
-      transform: 'translate3d(0, 0, 0)'
-    }
-
-    let contentCssObj = {
+    let cssObj = {
       transition: 'transform 0.2s ease',
       transform: 'translate3d(0, 0, 0)'
     }
 
     this.state = {
-      thumbCss: thumbCssObj,
-      contentCss: contentCssObj
+      thumbCss: cssObj,
+      contentCss: cssObj
     }
   }
 
@@ -68,14 +63,6 @@ class TvScrollbar extends React.Component {
 
     this.scrollbarStride = (scrollbarHeight - thumbHeight) / this.totalSteps;
 
-    // console.log("content height: " + contentHeight);
-    // console.log("show height: " + showHeight);
-    // console.log("scrollbar height: " + scrollbarHeight);
-    // console.log("thumb height: " + thumbHeight);
-    // console.log("totalSteps: " + this.totalSteps);
-    // console.log("scrollbarStride: " + this.scrollbarStride); 
-    // console.log("content stride: " + this.contentStride);
-
     this.bind();
   }
 
@@ -84,11 +71,11 @@ class TvScrollbar extends React.Component {
     document.body.addEventListener('keydown', function (e) {
       if(!self.activited) return;
       let key = e.keyCode;
-      if(key == 38){  // up
+      if(key == 38) {  // up
         self.moveUp();
-      }else if(key == 40){  // down
+      } else if(key == 40) {  // down
         self.moveDown();
-      }else{
+      } else {
         return;
       }  
     }, false);
@@ -99,12 +86,7 @@ class TvScrollbar extends React.Component {
     if(this.iNow < 0){
       this.iNow = 0;
     }
-    let dist1 = -this.iNow * this.contentStride;
-    let dist2 = this.iNow * this.scrollbarStride;
-    this.setState({
-      thumbCss: this._getAnimStyle(dist2),
-      contentCss: this._getAnimStyle(dist1)
-    })
+    this.move();
   }
 
   moveDown() {
@@ -112,6 +94,10 @@ class TvScrollbar extends React.Component {
     if(this.iNow > this.totalSteps){
       this.iNow = this.totalSteps;
     }
+    this.move();
+  }
+
+  move() {
     let dist1 = -this.iNow * this.contentStride;
     let dist2 = this.iNow * this.scrollbarStride;
     this.setState({

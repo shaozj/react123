@@ -19752,19 +19752,14 @@
 	
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TvScrollbar).call(this, props, context));
 	
-	    var thumbCssObj = {
-	      transition: 'transform 0.2s ease',
-	      transform: 'translate3d(0, 0, 0)'
-	    };
-	
-	    var contentCssObj = {
+	    var cssObj = {
 	      transition: 'transform 0.2s ease',
 	      transform: 'translate3d(0, 0, 0)'
 	    };
 	
 	    _this.state = {
-	      thumbCss: thumbCssObj,
-	      contentCss: contentCssObj
+	      thumbCss: cssObj,
+	      contentCss: cssObj
 	    };
 	    return _this;
 	  }
@@ -19816,14 +19811,6 @@
 	
 	      this.scrollbarStride = (scrollbarHeight - thumbHeight) / this.totalSteps;
 	
-	      // console.log("content height: " + contentHeight);
-	      // console.log("show height: " + showHeight);
-	      // console.log("scrollbar height: " + scrollbarHeight);
-	      // console.log("thumb height: " + thumbHeight);
-	      // console.log("totalSteps: " + this.totalSteps);
-	      // console.log("scrollbarStride: " + this.scrollbarStride);
-	      // console.log("content stride: " + this.contentStride);
-	
 	      this.bind();
 	    }
 	  }, {
@@ -19851,12 +19838,7 @@
 	      if (this.iNow < 0) {
 	        this.iNow = 0;
 	      }
-	      var dist1 = -this.iNow * this.contentStride;
-	      var dist2 = this.iNow * this.scrollbarStride;
-	      this.setState({
-	        thumbCss: this._getAnimStyle(dist2),
-	        contentCss: this._getAnimStyle(dist1)
-	      });
+	      this.move();
 	    }
 	  }, {
 	    key: 'moveDown',
@@ -19865,6 +19847,11 @@
 	      if (this.iNow > this.totalSteps) {
 	        this.iNow = this.totalSteps;
 	      }
+	      this.move();
+	    }
+	  }, {
+	    key: 'move',
+	    value: function move() {
 	      var dist1 = -this.iNow * this.contentStride;
 	      var dist2 = this.iNow * this.scrollbarStride;
 	      this.setState({
